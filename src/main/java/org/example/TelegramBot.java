@@ -2,10 +2,13 @@ package org.example;
 
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-public class Bot extends TelegramLongPollingBot{
+import java.time.LocalTime;
+
+public class TelegramBot extends TelegramLongPollingBot{
 
   /**
    * Метод прийому повідомлень.
@@ -13,8 +16,34 @@ public class Bot extends TelegramLongPollingBot{
    */
   @Override
   public void onUpdateReceived(Update update) {
-    String message = update.getMessage().getText();
-    sendMsg(update.getMessage().getChatId().toString(), message);
+    Message message1 = update.getMessage();
+    String message = message1.getText();
+    long chatId = message1.getChatId();
+
+    switch(message){
+      case "/start":
+        startCommandReceived(chatId, update.getMessage().getChat().getFirstName());
+        break;
+      case "/help":
+        String answer = "This bot is created for demonstration purposes. It can respond to the /start command with a greeting message. For more information, please contact the developer.";
+        sendMessage(chatId, answer);
+        break;
+        case  "/світло":
+          long minuteCounter = Engine.getMinuteCounter();
+          String result = minuteCounter < 0?
+              "Світло вимкнено " + LocalTime.ofSecondOfDay(Math.abs(minuteCounter) * 60) + " хвилин(у)" :
+              "Світло увімкнено " + LocalTime.ofSecondOfDay(minuteCounter * 60) + " хвилин(у)";
+          sendMessage(chatId, result);
+          break;
+
+      default:
+
+
+    }
+  }
+  private void startCommandReceived(Long chatId, String name) {
+    String answer = "Hi, " + name + ", nice to meet you!";
+    sendMessage(chatId, answer);
   }
 
   /**
@@ -22,15 +51,15 @@ public class Bot extends TelegramLongPollingBot{
    * @param chatId id чату
    * @param s Рядок, який необхідно відправити як повідомлення.
    */
-  public synchronized void sendMsg(String chatId, String s) {
+  public synchronized void sendMessage(long chatId, String s) {
     SendMessage sendMessage = new SendMessage();
     sendMessage.enableMarkdown(true);
     sendMessage.setChatId(chatId);
     sendMessage.setText(s);
     try {
-      sendMessage(sendMessage);
+      execute(sendMessage);
     }
-    catch (TelegramApiException e) {
+    catch (TelegramApiException e){
       e.printStackTrace();
     }
   }
