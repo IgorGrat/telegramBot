@@ -31,8 +31,8 @@ public class TelegramBot extends TelegramLongPollingBot{
         case  "/світло":
           long minuteCounter = Engine.getMinuteCounter();
           String result = minuteCounter < 0?
-              "Світло вимкнено " + LocalTime.ofSecondOfDay(Math.abs(minuteCounter) * 60) + " хвилин(у)" :
-              "Світло увімкнено " + LocalTime.ofSecondOfDay(minuteCounter * 60) + " хвилин(у)";
+              "❗ Світло вимкнено " + LocalTime.ofSecondOfDay(Math.abs(minuteCounter) * 60) + " хвилин(у)" :
+              "✅ Світло увімкнено " + LocalTime.ofSecondOfDay(minuteCounter * 60) + " хвилин(у)";
           sendMessage(chatId, result);
           break;
 
