@@ -7,18 +7,20 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.time.LocalTime;
+import java.util.*;
 
-public class TelegramBot extends TelegramLongPollingBot{
-
+public class TelegramBot extends TelegramLongPollingBot implements OnOffLightListener{
+  private Set<Long> invokeUsersList = Collections.synchronizedSet(new HashSet<>());
   /**
    * Метод прийому повідомлень.
    * @param update Містить повідомлення від користувача.
    */
   @Override
-  public void onUpdateReceived(Update update) {
+  public void onUpdateReceived(Update update){
     Message message1 = update.getMessage();
     String message = message1.getText();
     long chatId = message1.getChatId();
+    invokeUsersList.add(chatId);
 
     switch(message){
       case "/start":
@@ -31,11 +33,10 @@ public class TelegramBot extends TelegramLongPollingBot{
         case  "/світло":
           long minuteCounter = Engine.getMinuteCounter();
           String result = minuteCounter < 0?
-              "❗ Світло вимкнено " + LocalTime.ofSecondOfDay(Math.abs(minuteCounter) * 60) + " хвилин(у)" :
-              "✅ Світло увімкнено " + LocalTime.ofSecondOfDay(minuteCounter * 60) + " хвилин(у)";
+          "❗ Світло вимкнено " + LocalTime.ofSecondOfDay(Math.abs(minuteCounter) * 60) + " хвилин(у)" :
+          "✅ Світло увімкнено " + LocalTime.ofSecondOfDay(minuteCounter * 60) + " хвилин(у)";
           sendMessage(chatId, result);
           break;
-
       default:
 
 
@@ -80,5 +81,14 @@ public class TelegramBot extends TelegramLongPollingBot{
   @Override
   public String getBotToken() {
     return "8228623088:AAGUh2gOKsHVMzFelWkLLqawW4ctbIix99I";
+  }
+
+  @Override
+  public void onOffLightInvoke(OnOffLightEvent event){
+    boolean on = event.isOn();
+    String status = on? "✅ Світло щойно з'явилось" : "❗ Світло щойно пропало";
+    for(Long chatId : invokeUsersList){
+      sendMessage(chatId, status);
+    }
   }
 }
