@@ -23,18 +23,33 @@ public class TelegramBot extends TelegramLongPollingBot implements OnOffLightLis
     invokeUsersList.add(chatId);
 
     switch(message){
+      case "/about": {
+        String answer = "«Це наш Магістр Чорної Міді. Він єдиний, хто знає, чи працює кавомашина, " +
+            "чи ми сьогодні знову п'ємо холодну воду з-під крана і вдаємо, що це " +
+            "\"айс-лате\". Якщо він мовчить — значить, в офісі зараз атмосфера середньовічного " +
+            "замку: холодно, темно і хочеться спалити когось на вогнищі за поганий Wi-Fi».";
+            sendMessage(chatId, answer);
+        break;
+      }
       case "/start":
         startCommandReceived(chatId, update.getMessage().getChat().getFirstName());
         break;
+      case "/хелп" :
       case "/help":
-        String answer = "This bot is created for demonstration purposes. It can respond to the /start command with a greeting message. For more information, please contact the developer.";
+        String answer = "Маніфест:\n" +
+            "/about\n" +
+            "/strum\n" +
+            "/струм\n" +
+            "/start\n";
+
         sendMessage(chatId, answer);
         break;
-        case  "/світло":
+        case "/струм":
+        case "/strum" :
           long minuteCounter = Engine.getMinuteCounter();
           String result = minuteCounter < 0?
-          "❗ Світло вимкнено " + LocalTime.ofSecondOfDay(Math.abs(minuteCounter) * 60) + " хвилин(у)" :
-          "✅ Світло увімкнено " + LocalTime.ofSecondOfDay(minuteCounter * 60) + " хвилин(у)";
+          "❗ Струм вимкнено " + LocalTime.ofSecondOfDay(Math.abs(minuteCounter) * 60) + " хвилин(у)" :
+          "✅ Струм увімкнено " + LocalTime.ofSecondOfDay(minuteCounter * 60) + " хвилин(у)";
           sendMessage(chatId, result);
           break;
       default:
@@ -43,7 +58,7 @@ public class TelegramBot extends TelegramLongPollingBot implements OnOffLightLis
     }
   }
   private void startCommandReceived(Long chatId, String name) {
-    String answer = "Hi, " + name + ", nice to meet you!";
+    String answer = "Вітаю! Ти щойно активував Цифрового Магістра Чорної Міді⚡";
     sendMessage(chatId, answer);
   }
 
@@ -80,13 +95,13 @@ public class TelegramBot extends TelegramLongPollingBot implements OnOffLightLis
    */
   @Override
   public String getBotToken() {
-    return "8228623088:AAGUh2gOKsHVMzFelWkLLqawW4ctbIix99I";
+    return "8218259173:AAEQAF8ubPtM8Ukj0QlqbvXnGXvtsBkipTs";
   }
 
   @Override
   public void onOffLightInvoke(OnOffLightEvent event){
     boolean on = event.isOn();
-    String status = on? "✅ Світло щойно з'явилось" : "❗ Світло щойно пропало";
+    String status = on? "✅ Струм є, настрій теж!" : "❗Струм втік, залишилась лише надія і паверстанція.";
     for(Long chatId : invokeUsersList){
       sendMessage(chatId, status);
     }
