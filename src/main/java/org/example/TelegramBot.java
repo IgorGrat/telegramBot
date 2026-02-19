@@ -25,6 +25,11 @@ public class TelegramBot extends TelegramLongPollingBot implements OnOffLightLis
     invokeUsersList.add(chatId);
 
     switch(message){
+      case "/питання є": {
+          String answer = "Питань нема ! Мене міняти намагаєтесь дарма";
+              sendMessage(chatId, answer);
+          break;
+      }
       case "/about": {
         String answer = "«Це наш Магістр Чорної Міді. Він єдиний, хто знає, чи працює кавомашина, " +
             "чи ми сьогодні знову п'ємо холодну воду з-під крана і вдаємо, що це " +
@@ -55,8 +60,8 @@ public class TelegramBot extends TelegramLongPollingBot implements OnOffLightLis
           String stringDate =  formatter.format(date);
 
           String result = minuteCounter < 0?
-          " ☝ Струм вимкнено в " + stringDate + "\n ❗ Струму немає вже " + lastedTime + " хвилин(у)" :
-          "✌ Струм з'явивися в " + stringDate + "\n ✅ Струм є вже " + lastedTime + " хвилин(у)";
+          " ☝ Електропостачання припинено о " + stringDate + "\n\n ❗ Світла немає вже " + lastedTime + " хвилин(у)" :
+          "✌ Електропостачання відновлено о " + stringDate + "\n\n ✅ Світло є вже " + lastedTime + " хвилин(у)";
           sendMessage(chatId, result);
           break;
       default:
