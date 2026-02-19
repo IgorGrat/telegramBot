@@ -6,7 +6,9 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class TelegramBot extends TelegramLongPollingBot implements OnOffLightListener{
@@ -47,9 +49,14 @@ public class TelegramBot extends TelegramLongPollingBot implements OnOffLightLis
         case "/струм":
         case "/strum" :
           long minuteCounter = Engine.getMinuteCounter();
+          LocalTime lastedTime = LocalTime.ofSecondOfDay(Math.abs(minuteCounter) * 60);
+          LocalDateTime date = LocalDateTime.now().minusMinutes(Math.abs(minuteCounter));
+          DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+          String stringDate =  formatter.format(date);
+
           String result = minuteCounter < 0?
-          "❗ Струм вимкнено " + LocalTime.ofSecondOfDay(Math.abs(minuteCounter) * 60) + " хвилин(у)" :
-          "✅ Струм увімкнено " + LocalTime.ofSecondOfDay(minuteCounter * 60) + " хвилин(у)";
+          " ☝ Струм вимкнено в " + stringDate + "\n ❗ Струму немає вже " + lastedTime + " хвилин(у)" :
+          "✌ Струм з'явивися в " + stringDate + "\n ✅ Струм є вже " + lastedTime + " хвилин(у)";
           sendMessage(chatId, result);
           break;
       default:
@@ -96,6 +103,7 @@ public class TelegramBot extends TelegramLongPollingBot implements OnOffLightLis
   @Override
   public String getBotToken() {
     return "8218259173:AAEQAF8ubPtM8Ukj0QlqbvXnGXvtsBkipTs";
+//    return "8228623088:AAGUh2gOKsHVMzFelWkLLqawW4ctbIix99I";
   }
 
   @Override
